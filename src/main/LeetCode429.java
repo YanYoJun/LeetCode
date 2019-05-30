@@ -1,11 +1,8 @@
 package main;
 
-import java.util.ArrayList;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Stack;
+import java.util.*;
 
-public class LeetCode590 {
+public class LeetCode429 {
     public static void main(String... args) {
         Node node1 = new Node();
         node1.val = 1;
@@ -31,7 +28,6 @@ public class LeetCode590 {
         node3.children.add(node5);
         node3.children.add(node6);
 
-        System.out.println(new Solution().postorder(node1));
 
     }
 
@@ -50,25 +46,28 @@ public class LeetCode590 {
     }
 
     private static class Solution {
-        public List<Integer> postorder(Node root) {
-            Stack<Node> stack = new Stack<>();
-            List<Integer> result = new ArrayList<>();
-            if (root != null) {
-                stack.push(root);
+        public List<List<Integer>> levelOrder(Node root) {
+            Queue<Node> curLevel = new LinkedList<>();
+            Queue<Node> nextLevel = new LinkedList<>();
+            List<List<Integer>> result = new ArrayList<>();
+            if(root == null){
+                return result;
             }
-            while (!stack.isEmpty()) {
-                Node top = stack.peek();
-                if (top.children != null && top.children.size() != 0) {
-                    for (int i = top.children.size() - 1; i >= 0; i--) {
-                        System.out.println("push" + top.children.get(i).val);
-                        stack.push(top.children.get(i));
+            curLevel.offer(root);
+            while(!curLevel.isEmpty()){
+                List<Integer> curLevelList = new ArrayList<>();
+                while(!curLevel.isEmpty()) {
+                    Node temp = curLevel.poll();
+                    curLevelList.add(temp.val);
+                    if(temp.children != null && temp.children.size() != 0){
+                        for(Node tmp:temp.children){
+                            nextLevel.offer(tmp);
+                        }
                     }
-                    top.children = null;
-                } else {
-                    Node temp = stack.pop();
-                    System.out.println("pop" + temp.val);
-                    result.add(temp.val);
                 }
+                result.add(curLevelList);
+                curLevel = nextLevel;
+                nextLevel = new LinkedList<>();
             }
             return result;
         }
